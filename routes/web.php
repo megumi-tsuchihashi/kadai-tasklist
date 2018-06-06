@@ -20,8 +20,8 @@
 Route::resource('tasks', 'tasksController');
 
 Route::group(['middleware' => 'auth'], function () {
-    Route::resource('users', 'UsersController', ['only' => ['index', 'show']]);
-    Route::resource('microposts', 'MicropostsController', ['only' => ['store', 'destroy']]);
+Route::resource('users', 'UsersController', ['only' => ['index', 'show']]);
+Route::resource('microposts', 'MicropostsController', ['only' => ['store', 'destroy']]);
 });
 
 // user registration
