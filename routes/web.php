@@ -11,17 +11,14 @@
 |
 */
 
- Route::get('/', function() {
-            return view('welcome');
-        });
 
-//Route::get('/', 'tasksController@index'); 
+Route::get('/', 'tasksController@index'); 
     
 Route::resource('tasks', 'tasksController');
 
 Route::group(['middleware' => 'auth'], function () {
-Route::resource('users', 'UsersController', ['only' => ['index', 'show']]);
-Route::resource('microposts', 'MicropostsController', ['only' => ['store', 'destroy']]);
+    Route::resource('users', 'UsersController', ['only' => ['index', 'show']]);
+    Route::resource('tasklist', 'tasklistsController', ['only' => ['store', 'destroy']]);
 });
 
 // user registration

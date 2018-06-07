@@ -5,8 +5,8 @@
         <h1>Sign up</h1>
     </div>
 
-    <div class="row">
-        <div class="col-md-6 col-md-offset-3">
+    <div>
+        <div>
 
             {!! Form::open(['route' => 'signup.post']) !!}
                 <div class="form-group">

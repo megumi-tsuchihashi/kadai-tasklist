@@ -8,6 +8,8 @@ use App\Http\Requests;
 
 use App\task;
 
+use Illminate;
+
 class tasksController extends Controller
 {
     /**
@@ -15,13 +17,18 @@ class tasksController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+        public function index()
     {
-        $tasks = task::all();
-
+        if(\Auth::check()) {
+        $user = \Auth::user();
+        $tasks = task::all()->where('user_id', '=', $user->id);
+        
         return view('tasks.index', [
             'tasks' => $tasks,
         ]);
+        }else{
+            return view('welcome');
+        }
     }
 
     /**
@@ -32,11 +39,17 @@ class tasksController extends Controller
      
         public function create()
     {
-        $task = new task;
+        if(\Auth::check()) {
+            $user = \Auth::user();
+            $task = new task;
 
-        return view('tasks.create', [
-            'task' => $task,
+            return view('tasks.create', [
+                'task' => $task,
+       
         ]);
+        }else{
+            return view('welcome');
+        }
     }
 
     /**
@@ -55,6 +68,7 @@ class tasksController extends Controller
         $task = new task;
         $task->status = $request->status;
         $task->content = $request->content;
+        $task->user_id =\Auth::user()->id;
         $task->save();
 
         return redirect('/');
@@ -68,11 +82,19 @@ class tasksController extends Controller
      */
     public function show($id)
     {
+        if(\Auth::check()) {
         $task = task::find($id);
-        
-        return view('tasks.show',[
-            'task' => $task,
-        ]);
+            if(\Auth::user()->id === $task->user_id){
+                return view('tasks.show',[
+                    'task'=> $task,
+            ]);
+            }else{
+                return view('welcome');
+            }
+            
+        }else{
+            return view('welcome');
+        }
     }
 
     /**
@@ -82,12 +104,20 @@ class tasksController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
-    {
+    { 
+        if(\Auth::check()) {
         $task = task::find($id);
-
-        return view('tasks.edit', [
-            'task' => $task,
-        ]);
+            if(\Auth::user()->id === $task->user_id){
+                return view('tasks.edit', [
+                'task' => $task,
+            ]);
+            }else{
+                return view('welcome');
+            }
+            
+        }else{
+            return view('welcome');
+        }
     }
 
     /**
@@ -99,8 +129,10 @@ class tasksController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if(\Auth::check()) {
         $this->validate($request, [
             'status' => 'required|max:10',
+            'content'=> 'required|max:191',
         ]);
         
         $task = task::find($id);
@@ -109,6 +141,9 @@ class tasksController extends Controller
         $task->save();
 
         return redirect('/');
+        }else{
+            return view('welcome');
+        }
     }
 
     /**
@@ -118,10 +153,14 @@ class tasksController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
-    {
-        $task = task::find($id);
-        $task->delete();
+    { 
+            $task = task::find($id);
+            if(\Auth::user()->id === $task->user_id){
+                $task->delete();
 
-        return redirect('/');
+                return redirect('/');
+            }else{
+                return view('welcome');
+            }
     }
 }
